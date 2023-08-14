@@ -117,13 +117,97 @@ def test_visit_artist_page_id4(page, test_web_address, db_connection):
     h1_tag = page.locator("h1")
     expect(h1_tag).to_have_text("Nina Simone")
 
+'''
+Create a new album and see in the list of albums.
+'''
+def test_create_album(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add new album'")
+    page.fill("input[name=name]", "Waterloo")
+    page.fill("input[name=release_year]", "1974")
+    page.fill("input[name=artist_id]", "2")
+    page.click("text='Add album'")
+    title_element = page.locator("h1")
+    expect(title_element).to_have_text("Waterloo")
+    content_element = page.locator("p")
+    expect(content_element).to_have_text("Release year: 1974\nArtist: ABBA")
+    page.goto(f"http://{test_web_address}/albums/3")
+    h1_tag = page.locator("h1")
+    expect(h1_tag).to_have_text("Waterloo")
 
+'''
+When we try to create an album with empty fields the form shows an error.
+'''
+def test_create_album_empty_fields(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add new album'")
+    page.click("text='Add album'")
+    errors_tag = page.locator("err")
+    expect(errors_tag).to_have_text("All fields must be filled in.")
 
+'''
+Try to create album with invalid artist id.
+'''
+def test_create_album_invalid_artist_id(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add new album'")
+    page.fill("input[name=name]", "Waterloo")
+    page.fill("input[name=release_year]", "1974")
+    page.fill("input[name=artist_id]", "23")
+    page.click("text='Add album'")
+    errors_tag = page.locator("err")
+    expect(errors_tag).to_have_text("Please add artist first.")
 
+'''
+Try to create album with invalid artist id and missing field.
+'''
+def test_create_album_double_invalid(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/albums")
+    page.click("text='Add new album'")
+    page.fill("input[name=name]", "Waterloo")
+    page.fill("input[name=artist_id]", "23")
+    page.click("text='Add album'")
+    errors_tag = page.locator("err")
+    expect(errors_tag).to_have_text("All fields must be filled in.Please add artist first.")
 
+'''
+Create a new artist and see in the list of albums.
+'''
+def test_create_artist(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/artists")
+    page.click("text='Add new artist'")
+    page.fill("input[name=name]", "Pink Floyd")
+    page.fill("input[name=genre]", "Rock")
+    page.click("text='Add artist'")
+    title_element = page.locator("h1")
+    expect(title_element).to_have_text("Pink Floyd")
+    content_element = page.locator("p")
+    expect(content_element).to_have_text("Genre: Rock")
+    page.goto(f"http://{test_web_address}/artists/5")
+    h1_tag = page.locator("h1")
+    expect(h1_tag).to_have_text("Pink Floyd")
 
-
-
+'''
+When we try to create an artist with empty fields the form shows an error.
+'''
+def test_create_artist_empty_fields(page, test_web_address, db_connection):
+    page.set_default_timeout(1000)
+    db_connection.seed("seeds/music_library.sql")
+    page.goto(f"http://{test_web_address}/artists")
+    page.click("text='Add new artist'")
+    page.click("text='Add artist'")
+    errors_tag = page.locator("err")
+    expect(errors_tag).to_have_text("All fields must be filled in.")
 
 
 

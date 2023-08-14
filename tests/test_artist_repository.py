@@ -36,4 +36,5 @@ def test_create_record(db_connection):
         Artist(3, "Taylor Swift", "Pop"),
         Artist(4, "Nina Simone", "Jazz"),
         Artist(5, "The Beatles", "Rock"),
-    ]    
+    ]
+

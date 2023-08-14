@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from lib.database_connection import get_flask_database_connection
 from lib.album_repository import AlbumRepository
 from lib.album import Album
@@ -42,8 +42,33 @@ def get_artists():
     artists = repository.all()
     return render_template('artists_template.html', artists=artists)   
 
+@app.route('/albums/new', methods=['GET'])
+def get_album_new():
+    return render_template('new_album_form.html')
 
+@app.route('/albums', methods=['POST'])
+def create_album():
+    connection = get_flask_database_connection(app)
+    repository = AlbumRepository(connection)
+    album = Album(None, request.form['name'], request.form['release_year'], request.form['artist_id'])  
+    if not album.is_valid(connection):
+        return render_template('new_album_form.html', error = album.generate_errors)
+    repository.create(album)
+    return redirect(f"/albums/{album.id}")
 
+@app.route('/artists/new', methods=['GET'])
+def get_artist_new():
+    return render_template('new_artist_form.html')
+
+@app.route('/artists', methods=['POST'])
+def create_artist():
+    connection = get_flask_database_connection(app)
+    repository = ArtistRepository(connection)
+    artist = Artist(None, request.form['name'], request.form['genre'])  
+    if not artist.is_valid():
+        return render_template('new_artist_form.html', error = artist.generate_errors)
+    repository.create(artist)
+    return redirect(f"/artists/{artist.id}")
 
 
 

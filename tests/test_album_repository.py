@@ -26,8 +26,17 @@ def test_create_Album(db_connection):
     repository.create(my_album)
     assert repository.all() == [Album(1, 'Doolittle', 1989, 1), Album(2, 'Surfer Rosa', 1988, 1), Album(3, 'Ok Computer', 1997, 5)]
 
-
-
+# '''
+# Check if artist id on list function works. 
+# '''    
+# def test_check_artist_id(db_connection):
+#     db_connection.seed("seeds/music_library.sql")
+#     repository = AlbumRepository(db_connection)    
+#     assert repository.check_artist_id_valid(1) == True
+#     assert repository.check_artist_id_valid(2) == True
+#     assert repository.check_artist_id_valid(3) == True
+#     assert repository.check_artist_id_valid(4) == True
+#     assert repository.check_artist_id_valid(5) == False
 
 
 

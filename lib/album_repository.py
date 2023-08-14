@@ -19,10 +19,13 @@ class AlbumRepository():
         return item
     
     def create(self, album):
-        self._connection.execute(
-            'INSERT INTO albums (title, release_year, artist_id) VALUES (%s, %s,%s)', [album.title, album.release_year, album.artist_id]
+        rows = self._connection.execute(
+            'INSERT INTO albums (title, release_year, artist_id) VALUES (%s, %s,%s) RETURNING id', [album.title, album.release_year, album.artist_id]
         )
-        return None
+        #album.id = rows['id'][0]
+        row = rows[0]
+        album.id = row['id']
+        return album
 
 
 
